@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Generador de Notas de Tareas</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<style>
+		/* Estilos adicionales si fuesen necesarios */
+	</style>
+</head>
+
+<body>
+	<div class="container mt-4">
+		<h1>Generador de Notas de Tareas</h1>
+		<hr>
+
+		<div class="form-group">
+			<label for="tipoTarea">Seleccione el tipo de tarea:</label>
+			<select class="form-control" id="tipoTarea">
+				<option>Seleccione...</option>
+				<option value="SRR">SRR</option>
+				<option value="LDI">LDI</option>
+				<option value="EDF">EDF</option>
+				<option value="VFR">VFR</option>
+				<option value="FMR">FMR</option>
+				<option value="VFF">VFF</option>
+				<option value="VFE">VFE</option>
+				<option value="otros">Otros</option>
+			</select>
+		</div>
+
+		<!-- Contenedor dinámico para los campos de la tarea SRR -->
+		<div id="camposTarea">
+			<!-- Los campos específicos se añadirán dinámicamente aquí -->
+		</div>
+
+		<button id="generarNota" class="btn btn-primary mt-3">Generar Nota</button>
+
+		<div id="notaGenerada" class="mt-4">
+			<!-- Aquí se mostrará la nota generada dinámicamente -->
+		</div>
+	</div>
+
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	<script src="script.js"></script>
+</body>
+
+</html>
