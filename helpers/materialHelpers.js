@@ -1,4 +1,27 @@
-function initializeMaterialEvents() {
+export function addMaterialSection(labelText, containerId, buttonId) {
+	const formGroup = document.createElement('div');
+	formGroup.className = 'form-group';
+
+	const label = document.createElement('label');
+	label.textContent = labelText;
+	formGroup.appendChild(label);
+
+	const container = document.createElement('div');
+	container.id = containerId;
+	formGroup.appendChild(container);
+
+	const button = document.createElement('button');
+	button.type = 'button';
+	button.id = buttonId;
+	button.className = 'btn btn-primary mt-2';
+	button.textContent = 'Agregar Material';
+	formGroup.appendChild(button);
+
+	document.getElementById('camposTarea').appendChild(formGroup);
+}
+
+// Asegúrate de exportar todas las funciones necesarias
+export function initializeMaterialEvents() {
 	document.getElementById('addMaterialGasto').addEventListener('click', function () {
 		addMaterial('materialesGasto');
 	});
@@ -8,7 +31,7 @@ function initializeMaterialEvents() {
 	});
 }
 
-function addMaterial(containerId) {
+export function addMaterial(containerId) {
 	const container = document.getElementById(containerId);
 	const materialDiv = document.createElement('div');
 	materialDiv.className = 'form-inline mb-2';
@@ -42,7 +65,7 @@ function addMaterial(containerId) {
 	updateMaterialOptions(typeSelect.value, valueSelect); // Inicializar con las opciones correctas
 }
 
-function updateMaterialOptions(type, valueSelect) {
+export function updateMaterialOptions(type, valueSelect) {
 	const options = {
 		pad: Array.from({ length: 20 }, (_, i) => i + 1),
 		eq: Array.from({ length: 15 }, (_, i) => (i * 1.5).toFixed(1)),
@@ -53,7 +76,7 @@ function updateMaterialOptions(type, valueSelect) {
 	valueSelect.innerHTML = options[type].map(value => `<option value="${value}">${value}</option>`).join('');
 }
 
-function getMaterialList(containerId) {
+export function getMaterialList(containerId) {
 	const container = document.getElementById(containerId);
 	const materials = [];
 	container.querySelectorAll('.form-inline').forEach(materialDiv => {

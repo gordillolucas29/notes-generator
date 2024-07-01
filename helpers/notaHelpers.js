@@ -1,36 +1,103 @@
-function generateNota(tipoTarea, campos, materialesGasto, materialesRecuperado) {
-	let notaGenerada = `Se llega a sitio, se procede a tomar medición en red verificando niveles fuera de rango.<br /> 
-			Se dirige hacia amplificador ${campos.tipoAmplificador} ubicado en ${campos.direccionAmplificador}.<br /> 
-			Se toman mediciones en dicho activo verificando niveles de entrada ${campos.condicionEntrada}.<br />`;
+import tareasConfig from '../config/tareasConfig.js';
 
-	if (campos.condicionEntrada === 'fuera de rango') {
-		notaGenerada += ` Se procede a verificar el estado del cableado y conector de entrada en activo.<br /> 
-					Se verifica [condicion].`;
-		// Aquí se debería añadir la lógica para el tipo de problema encontrado
+export function generateNota(tipoTarea, campos, materialesGasto, materialesRecuperado) {
+	const tareaConfig = tareasConfig[tipoTarea];
+
+	if (!tareaConfig) {
+		return '';
 	}
 
-	if (campos.condicionSalida === 'fuera de rango') {
-		notaGenerada += ` Se procede a ajustar niveles en salida según lápida de plano.<br /><br />`;
-	} else {
-		notaGenerada += ` Se verifican niveles de salida operativos.<br /><br />`;
-	}
+	let notaGenerada = '';
 
-	notaGenerada += ` Se comunica con ${campos.operadorBase} operador de base quien indica comunicarse con Ore.<br />
-			Se confirma niveles operativos con ${campos.operadorOre} operador de Ore quien brinda el cierre de la tarea.<br /><br />`;
+	tareaConfig.campos.forEach(campo => {
+		const valorCampo = campos[campo.id];
+
+		if (valorCampo !== undefined && valorCampo !== '') {
+			switch (campo.id) {
+				case 'hogaresNodo':
+					notaGenerada += `Nodo de ${valorCampo} hogares ubicado en ${campos.direccionNodoOptico}.<br />`;
+					break;
+				case 'direccionNodoOptico':
+					notaGenerada += `Dirección del nodo óptico: ${valorCampo}.<br />`;
+					break;
+				case 'medicionesNiveles':
+					if (valorCampo) {
+						notaGenerada += `Se tomaron mediciones de niveles.<br />`;
+					}
+					break;
+				case 'medicionesTXRX2':
+					if (valorCampo) {
+						notaGenerada += `Mediciones en TX y RX2 realizadas.<br />`;
+					}
+					break;
+				case 'puertoAfectado':
+					notaGenerada += `Puerto afectado: ${valorCampo}.<br />`;
+					break;
+				case 'trabajoConectoresSalidaNodo':
+					if (valorCampo) {
+						notaGenerada += `Se trabajó en los conectores de la salida del nodo.<br />`;
+					}
+					break;
+				case 'direccionPuertoAfectado':
+					notaGenerada += `Dirección del puerto afectado: ${valorCampo}.<br />`;
+					break;
+				case 'subnodo':
+					if (campos.hogaresNodo === '2000') {
+						notaGenerada += `Subnodo afectado: ${valorCampo}.<br />`;
+					}
+					break;
+				case 'tipoAmplificador':
+					notaGenerada += `Se dirige hacia amplificador ${valorCampo} ubicado en ${campos.direccionAmplificador}.<br />`;
+					break;
+				case 'direccionAmplificador':
+					notaGenerada += `Dirección del amplificador: ${valorCampo}.<br />`;
+					break;
+				case 'condicionEntrada':
+					notaGenerada += `Se toman mediciones en dicho activo verificando niveles de entrada ${valorCampo}.<br />`;
+					if (valorCampo === 'fuera de rango') {
+						notaGenerada += `Se procede a verificar el estado del cableado y conector de entrada en activo.<br />`;
+						// Aquí se debería añadir la lógica para el tipo de problema encontrado
+					}
+					break;
+				case 'operadorBase':
+					notaGenerada += `Se comunica con ${valorCampo} operador de base quien indica comunicarse con Ore.<br />`;
+					break;
+				case 'operadorOre':
+					notaGenerada += `Se confirma niveles operativos con ${valorCampo} operador de Ore quien brinda el cierre de la tarea.<br />`;
+					break;
+				case 'condicionSalida':
+					if (valorCampo === 'fuera de rango') {
+						notaGenerada += `Se procede a ajustar niveles en salida según lápida de plano.<br /><br />`;
+					} else {
+						notaGenerada += `Se verifican niveles de salida operativos.<br /><br />`;
+					}
+					break;
+				default:
+					break;
+			}
+		}
+	});
 
 	// Añadir materiales gastados
-	if (materialesGasto.length > 0) {
-		notaGenerada += ` Se gastaron los siguientes materiales:\n- ${materialesGasto.join('\n- ')}\n`;
-	} else {
-		notaGenerada += ' No se utilizaron materiales.';
-	}
+	notaGenerada += generateMaterialesNota(materialesGasto, 'gastados');
 
 	// Añadir materiales recuperados
-	if (materialesRecuperado.length > 0) {
-		notaGenerada += `\nSe recuperaron los siguientes materiales:\n- ${materialesRecuperado.join('\n- ')}\n`;
-	} else {
-		notaGenerada += '\nNo se recuperaron materiales.';
-	}
+	notaGenerada += generateMaterialesNota(materialesRecuperado, 'recuperados');
 
 	return notaGenerada;
+}
+
+function generateMaterialesNota(materiales, tipo) {
+	let notaMateriales = '';
+
+	if (materiales.length > 0) {
+		notaMateriales += `<br />Se ${tipo === 'gastados' ? 'gastaron' : 'recuperaron'} los siguientes materiales:<br />`;
+		materiales.forEach(material => {
+			notaMateriales += `- ${material}<br />`;
+		});
+	} else {
+		notaMateriales += `<br />No se ${tipo === 'gastados' ? 'utilizaron' : 'recuperaron'} materiales.<br />`;
+	}
+
+	return notaMateriales;
 }

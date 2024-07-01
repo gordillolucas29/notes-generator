@@ -1,3 +1,8 @@
+import tareasConfig from '../config/tareasConfig.js';
+import { initializeMaterialEvents, addMaterialSection, getMaterialList } from '../helpers/materialHelpers.js';
+import { generateNota } from '../helpers/notaHelpers.js';
+import { addCamposTarea } from '../helpers/domHelpers.js';
+
 document.addEventListener('DOMContentLoaded', function () {
 	const tipoTareaSelect = document.getElementById('tipoTarea');
 	const camposTarea = document.getElementById('camposTarea');
@@ -9,35 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		camposTarea.innerHTML = ''; // Limpiar campos anteriores al cambiar la opción
 
 		if (tareasConfig[tipoTarea]) {
-			tareasConfig[tipoTarea].campos.forEach(campo => {
-				const formGroup = document.createElement('div');
-				formGroup.className = 'form-group';
-
-				const label = document.createElement('label');
-				label.setAttribute('for', campo.id);
-				label.textContent = campo.label;
-				formGroup.appendChild(label);
-
-				let input;
-				if (campo.type === 'select') {
-					input = document.createElement('select');
-					input.className = 'form-control';
-					input.id = campo.id;
-					campo.options.forEach(option => {
-						const optionElement = document.createElement('option');
-						optionElement.value = option;
-						optionElement.textContent = option;
-						input.appendChild(optionElement);
-					});
-				} else {
-					input = document.createElement('input');
-					input.className = 'form-control';
-					input.id = campo.id;
-					input.type = campo.type;
-				}
-				formGroup.appendChild(input);
-				camposTarea.appendChild(formGroup);
-			});
+			addCamposTarea(tareasConfig[tipoTarea].campos);
 
 			// Añadir los campos de materiales
 			addMaterialSection('Materiales Gastados', 'materialesGasto', 'addMaterialGasto');
@@ -52,7 +29,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
 		if (tareasConfig[tipoTarea]) {
 			const campos = tareasConfig[tipoTarea].campos.reduce((acc, campo) => {
-				acc[campo.id] = document.getElementById(campo.id).value;
+				const inputElement = document.getElementById(campo.id);
+				if (inputElement) {
+					acc[campo.id] = inputElement.value;
+				} else if (campo.type === 'checkbox') {
+					acc[campo.id] = inputElement.checked;
+				}
 				return acc;
 			}, {});
 
