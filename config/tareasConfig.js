@@ -4,9 +4,9 @@ const tareasConfig = {
 			{ label: 'Tipo de amplificador', id: 'tipoAmplificador', type: 'select', options: ['HGD', 'HGBT', 'Line Extender'] },
 			{ label: 'Dirección del amplificador', id: 'direccionAmplificador', type: 'text' },
 			{ label: 'Condición de los niveles de entrada', id: 'condicionEntrada', type: 'select', options: ['OK', 'fuera de rango'] },
+			{ label: 'Condición de los niveles de salida', id: 'condicionSalida', type: 'select', options: ['operativos', 'fuera de rango'] },
 			{ label: 'Operador de base', id: 'operadorBase', type: 'text' },
-			{ label: 'Operador de ore', id: 'operadorOre', type: 'text' },
-			{ label: 'Condición de los niveles de salida', id: 'condicionSalida', type: 'select', options: ['operativos', 'fuera de rango'] }
+			{ label: 'Operador de ore', id: 'operadorOre', type: 'text' }
 		]
 	},
 	LDI: {

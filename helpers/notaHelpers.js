@@ -9,11 +9,16 @@ export function generateNota(tipoTarea, campos, materialesGasto, materialesRecup
 
 	let notaGenerada = '';
 
+	if (tipoTarea == "SRR") {
+		notaGenerada += `Se llega a sitio, se procede a tomar mediciones en red verificando niveles fuera de rango.<br />`;
+	}
+
 	tareaConfig.campos.forEach(campo => {
 		const valorCampo = campos[campo.id];
 
 		if (valorCampo !== undefined && valorCampo !== '') {
 			switch (campo.id) {
+				// LDI
 				case 'hogaresNodo':
 					notaGenerada += `Nodo de ${valorCampo} hogares ubicado en ${campos.direccionNodoOptico}.<br />`;
 					break;
@@ -46,31 +51,32 @@ export function generateNota(tipoTarea, campos, materialesGasto, materialesRecup
 						notaGenerada += `Subnodo afectado: ${valorCampo}.<br />`;
 					}
 					break;
-				case 'tipoAmplificador':
-					notaGenerada += `Se dirige hacia amplificador ${valorCampo} ubicado en ${campos.direccionAmplificador}.<br />`;
-					break;
-				case 'direccionAmplificador':
-					notaGenerada += `Dirección del amplificador: ${valorCampo}.<br />`;
-					break;
+				// SRR
 				case 'condicionEntrada':
 					notaGenerada += `Se toman mediciones en dicho activo verificando niveles de entrada ${valorCampo}.<br />`;
 					if (valorCampo === 'fuera de rango') {
-						notaGenerada += `Se procede a verificar el estado del cableado y conector de entrada en activo.<br />`;
+						notaGenerada += `Se procede a verificar el estado del cableado y conector de entrada en activo.
+						Se verifica conector de entrada con malla quebrada procediendo a reconectorizar correctamente el mismo, verificando así niveles en entrada ok.<br />`;
 						// Aquí se debería añadir la lógica para el tipo de problema encontrado
 					}
+					break;
+				case 'condicionSalida':
+					notaGenerada += `Se chequean niveles de salida verificando los mismos ${valorCampo}.<br />`;
+					if (valorCampo === 'fuera de rango') {
+						notaGenerada += `Se procede a ajustar niveles en salida según lápida de plano.<br /><br />`;
+					} else {
+						notaGenerada += `<br />`;
+					}
+					break;
+				// General
+				case 'tipoAmplificador':
+					notaGenerada += `Se dirige hacia amplificador ${valorCampo} ubicado en ${campos.direccionAmplificador}.<br />`;
 					break;
 				case 'operadorBase':
 					notaGenerada += `Se comunica con ${valorCampo} operador de base quien indica comunicarse con Ore.<br />`;
 					break;
 				case 'operadorOre':
 					notaGenerada += `Se confirma niveles operativos con ${valorCampo} operador de Ore quien brinda el cierre de la tarea.<br />`;
-					break;
-				case 'condicionSalida':
-					if (valorCampo === 'fuera de rango') {
-						notaGenerada += `Se procede a ajustar niveles en salida según lápida de plano.<br /><br />`;
-					} else {
-						notaGenerada += `Se verifican niveles de salida operativos.<br /><br />`;
-					}
 					break;
 				default:
 					break;
