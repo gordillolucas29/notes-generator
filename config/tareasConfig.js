@@ -5,6 +5,17 @@ const tareasConfig = {
 			{ label: 'Dirección del amplificador', id: 'direccionAmplificador', type: 'text' },
 			{ label: 'Condición de los niveles de entrada', id: 'condicionEntrada', type: 'select', options: ['OK', 'fuera de rango'] },
 			{ label: 'Condición de los niveles de salida', id: 'condicionSalida', type: 'select', options: ['operativos', 'fuera de rango'] },
+			{
+				label: 'Tipo de Tap',
+				id: 'tipoTap',
+				type: 'select',
+				options: [
+					'2x8', '2x11', '2x14', '2x17', '2x20', '2x23', '2x26', '2x29', '2x32',
+					'4x8', '4x11', '4x14', '4x17', '4x20', '4x23', '4x26', '4x29', '4x32',
+					'8x11', '8x14', '8x17', '8x20', '8x23', '8x26', '8x29', '8x32'
+				]
+			},
+			{ label: 'Dirección del tap', id: 'direccionTap', type: 'text' },
 			{ label: 'Operador de base', id: 'operadorBase', type: 'text' },
 			{ label: 'Operador de ore', id: 'operadorOre', type: 'text' }
 		]

@@ -63,10 +63,11 @@ export function generateNota(tipoTarea, campos, materialesGasto, materialesRecup
 				case 'condicionSalida':
 					notaGenerada += `Se chequean niveles de salida verificando los mismos ${valorCampo}.<br />`;
 					if (valorCampo === 'fuera de rango') {
-						notaGenerada += `Se procede a ajustar niveles en salida según lápida de plano.<br /><br />`;
-					} else {
-						notaGenerada += `<br />`;
+						notaGenerada += `Se procede a ajustar niveles en salida según lápida de plano.<br />`;
 					}
+					break;
+				case 'tipoTap':
+					notaGenerada += `Se dirige hacia tap ${valorCampo} ubicado en ${campos.direccionTap}, se procede a tomar mediciones en el mismo verificando niveles operativos, se adjuntan imágenes geolocalizadas de dichas mediciones.<br /><br />`;
 					break;
 				// General
 				case 'tipoAmplificador':
