@@ -1,3 +1,4 @@
+// notaHelpers.js
 import tareasConfig from '../config/tareasConfig.js';
 
 export function generateNota(tipoTarea, campos, materialesGasto, materialesRecuperado) {
@@ -7,80 +8,25 @@ export function generateNota(tipoTarea, campos, materialesGasto, materialesRecup
 		return '';
 	}
 
-	let notaGenerada = '';
+	let notaGenerada = tareaConfig.plantillas.base || '';
 
-	if (tipoTarea == "SRR") {
-		notaGenerada += `Se llega a sitio, se procede a tomar mediciones en red verificando niveles fuera de rango.<br />`;
-	}
+	// Generar la nota usando los campos y condiciones
+	Object.keys(campos).forEach(campoId => {
+		const campo = tareaConfig.campos.find(c => c.id === campoId);
+		if (campo) {
+			let valorCampo = campos[campoId];
 
-	tareaConfig.campos.forEach(campo => {
-		const valorCampo = campos[campo.id];
+			// Aplica condiciones si existen
+			if (campo.condiciones && valorCampo !== undefined) {
+				const condiciones = campo.condiciones;
+				if (condiciones[valorCampo]) {
+					valorCampo = condiciones[valorCampo];
+				}
+			}
 
-		if (valorCampo !== undefined && valorCampo !== '') {
-			switch (campo.id) {
-				// LDI
-				case 'hogaresNodo':
-					notaGenerada += `Nodo de ${valorCampo} hogares ubicado en ${campos.direccionNodoOptico}.<br />`;
-					break;
-				case 'direccionNodoOptico':
-					notaGenerada += `Dirección del nodo óptico: ${valorCampo}.<br />`;
-					break;
-				case 'medicionesNiveles':
-					if (valorCampo) {
-						notaGenerada += `Se tomaron mediciones de niveles.<br />`;
-					}
-					break;
-				case 'medicionesTXRX2':
-					if (valorCampo) {
-						notaGenerada += `Mediciones en TX y RX2 realizadas.<br />`;
-					}
-					break;
-				case 'puertoAfectado':
-					notaGenerada += `Puerto afectado: ${valorCampo}.<br />`;
-					break;
-				case 'trabajoConectoresSalidaNodo':
-					if (valorCampo) {
-						notaGenerada += `Se trabajó en los conectores de la salida del nodo.<br />`;
-					}
-					break;
-				case 'direccionPuertoAfectado':
-					notaGenerada += `Dirección del puerto afectado: ${valorCampo}.<br />`;
-					break;
-				case 'subnodo':
-					if (campos.hogaresNodo === '2000') {
-						notaGenerada += `Subnodo afectado: ${valorCampo}.<br />`;
-					}
-					break;
-				// SRR
-				case 'condicionEntrada':
-					notaGenerada += `Se toman mediciones en dicho activo verificando niveles de entrada ${valorCampo}.<br />`;
-					if (valorCampo === 'fuera de rango') {
-						notaGenerada += `Se procede a verificar el estado del cableado y conector de entrada en activo.
-						Se verifica conector de entrada con malla quebrada procediendo a reconectorizar correctamente el mismo, verificando así niveles en entrada ok.<br />`;
-						// Aquí se debería añadir la lógica para el tipo de problema encontrado
-					}
-					break;
-				case 'condicionSalida':
-					notaGenerada += `Se chequean niveles de salida verificando los mismos ${valorCampo}.<br />`;
-					if (valorCampo === 'fuera de rango') {
-						notaGenerada += `Se procede a ajustar niveles en salida según lápida de plano.<br />`;
-					}
-					break;
-				case 'tipoTap':
-					notaGenerada += `Se dirige hacia tap ${valorCampo} ubicado en ${campos.direccionTap}, se procede a tomar mediciones en el mismo verificando niveles operativos, se adjuntan imágenes geolocalizadas de dichas mediciones.<br /><br />`;
-					break;
-				// General
-				case 'tipoAmplificador':
-					notaGenerada += `Se dirige hacia amplificador ${valorCampo} ubicado en ${campos.direccionAmplificador}.<br />`;
-					break;
-				case 'operadorBase':
-					notaGenerada += `Se comunica con ${valorCampo} operador de base quien indica comunicarse con Ore.<br />`;
-					break;
-				case 'operadorOre':
-					notaGenerada += `Se confirma niveles operativos con ${valorCampo} operador de Ore quien brinda el cierre de la tarea.<br />`;
-					break;
-				default:
-					break;
+			// Reemplazar en la plantilla
+			if (tareaConfig.plantillas[campoId]) {
+				notaGenerada += tareaConfig.plantillas[campoId].replace('{valorCampo}', valorCampo).replace('{direccionAmplificador}', campos.direccionAmplificador).replace('{direccionTap}', campos.direccionTap);
 			}
 		}
 	});
